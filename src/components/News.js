@@ -36,15 +36,22 @@ const News = (props)=>{
     }, [])
 
 
-    const fetchMoreData = async () => {   
+    // const fetchMoreData = async () => {   
+    //     const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page+1}&pageSize=${props.pageSize}`;
+    //     setPage(page+1) 
+    //     let data = await fetch(url);
+    //     let parsedData = await data.json()
+    //     setArticles(articles.concat(parsedData.articles))
+    //     setTotalResults(parsedData.totalResults)
+    //   };
+      const fetchMoreData = async () => {
         const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page+1}&pageSize=${props.pageSize}`;
-        setPage(page+1) 
+        setPage(page+1); 
         let data = await fetch(url);
-        let parsedData = await data.json()
-        setArticles(articles.concat(parsedData.articles))
-        setTotalResults(parsedData.totalResults)
-      };
- 
+        let parsedData = await data.json();
+        setArticles(prevArticles => [...prevArticles, ...parsedData.articles]);
+        setTotalResults(parsedData.totalResults);
+    };
         return (
             <>
                 <h1 className="text-center" style={{ margin: '35px 0px', marginTop: '90px', color:'white', textShadow: '#FC0 1px 0 10px'}}>News - Top {capitalizeFirstLetter(props.category)} Headlines</h1>
