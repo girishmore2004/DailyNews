@@ -79,6 +79,7 @@ const News = (props)=>{
 }
 
 
+
 News.defaultProps = {
     country: 'in',
     pageSize: 8,
@@ -91,50 +92,5 @@ News.propTypes = {
     category: PropTypes.string,
 }
 
+
 export default News
-
-const [articles, setArticles] = useState([]);
-const [loading, setLoading] = useState(true);
-const [page, setPage] = useState(1);
-const [totalResults, setTotalResults] = useState(0);
-
-// Update useEffect to fetch data whenever page or props change
-useEffect(() => {
-    document.title = `${capitalizeFirstLetter(props.category)} - News`;
-    updateNews(); 
-    // eslint-disable-next-line
-}, [page, props.country, props.category, props.apiKey, props.pageSize]);
-
-const fetchMoreData = async () => {   
-    const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page+1}&pageSize=${props.pageSize}`;
-    setPage(page+1) 
-    let data = await fetch(url);
-    let parsedData = await data.json();
-    // Use spread operator to merge new articles with existing ones
-    setArticles(prevArticles => [...prevArticles, ...parsedData.articles]);
-    setTotalResults(parsedData.totalResults);
-};
-
-// Render only when articles is not undefined
-return (
-    <>
-        <h1 className="text-center" style={{ margin: '35px 0px', marginTop: '90px', color:'white', textShadow: '#FC0 1px 0 10px'}}>News - Top {capitalizeFirstLetter(props.category)} Headlines</h1>
-        {loading && <Spinner />}
-        <InfiniteScroll
-            dataLength={articles ? articles.length : 0} // Add null check here
-            next={fetchMoreData}
-            hasMore={articles ? articles.length !== totalResults : false} // Add null check here
-            loader={<Spinner/>}
-        > 
-            <div className="container">
-                <div className="row">
-                    {articles && articles.map((element) => { // Add null check here
-                        return <div className="col-md-4" key={element.url}>
-                            <NewsItems title={element.title ? element.title : ""} description={element.description ? element.description : ""} imageUrl={element.urlToImage} newsUrl={element.url} author={element.author} date={element.publishedAt} source={element.source.name} />
-                        </div>
-                    })}
-                </div>
-            </div> 
-        </InfiniteScroll>
-    </>
-);
